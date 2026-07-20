@@ -1,0 +1,36 @@
+# Dossiers volumineux et inutiles pour Docker
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.coverage
+*.egg-info/
+dist/
+build/
+
+# Dossiers auto-générés
+staticfiles/
+*.sqlite3
+
+# Fichiers de configuration locale
+.git/
+.gitignore
+.env
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# Dossiers de dépendances
+node_modules/
+.npm/
+
+# Fichiers temporaires
+*.tmp
+*.swp
+*.swo
+*~

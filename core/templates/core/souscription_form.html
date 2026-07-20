@@ -1,0 +1,126 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% if erreurs %}
+  <div class="alert alert-danger">
+    <ul>
+      {% for err in erreurs %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+<div class="container my-5">
+  <h2>Souscription pour {{ forfait.nom }}</h2>
+  <form method="post" action="{% url 'finaliser_souscription' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Offre choisie</label>
+      <input type="text" class="form-control" value="{{ forfait.nom }} - À partir de {{ forfait.prix|floatformat:0 }} GNF/mois" disabled>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Région</label>
+      <input type="text" class="form-control" value="{{ zone.region }}" disabled>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Commune</label>
+      <input type="text" class="form-control" value="{{ commune.nom }}" disabled>
+    </div>
+    <input type="hidden" name="forfait_id" value="{{ forfait.id }}">
+    <input type="hidden" name="region_id" value="{{ zone.id }}">
+    <input type="hidden" name="commune_id" value="{{ commune.id }}">
+    <div class="mb-3">
+      <label for="nom" class="form-label">Nom complet</label>
+      <input type="text" name="nom" id="nom" class="form-control" required>
+    </div>
+    <div class="mb-3">
+  <label for="telephone" class="form-label">Téléphone</label>
+  <div class="input-group">
+    <span class="input-group-text" style="background:var(--gris-eee); color:var(--gris-888);">+224</span>
+    <input type="text" name="telephone" id="telephone" class="form-control" maxlength="9" pattern="[0-9]{9}" required >
+  </div>
+</div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" name="email" id="email" class="form-control">
+    </div>
+
+    <!-- Conditions Générales -->
+    <div class="card bg-light border-0 p-3 mb-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="accepte_cgv" id="accepte_cgv" required>
+        <label class="form-check-label" for="accepte_cgv">
+          J'ai lu et j'accepte les 
+          <a href="#" id="open-cgv" data-bs-toggle="modal" data-bs-target="#cgvModal"><strong>conditions générales</strong></a>
+          <span style="color: var(--rouge-vif);">*</span>
+        </label>
+      </div>
+      <small class="text-muted d-block mt-2">
+        <i class="bi bi-info-circle me-1"></i>
+        Vous devez accepter les conditions générales pour continuer votre souscription.
+      </small>
+    </div>
+
+    <button type="submit" class="btn btn-danger" id="submit-btn" style="background-color: var(--rouge-sky); border-color: var(--rouge-sky);">
+      <i class="bi bi-check-circle me-2"></i>Valider la souscription
+    </button>
+  </form>
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const checkbox = document.getElementById('accepte_cgv');
+      if (!checkbox.checked) {
+        e.preventDefault();
+        alert('Vous devez accepter les conditions générales pour continuer.');
+        checkbox.focus();
+      }
+    });
+  </script>
+  <!-- Modal for Conditions Générales -->
+  <div class="modal fade" id="cgvModal" tabindex="-1" aria-labelledby="cgvModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cgvModalLabel">Conditions générales</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center text-muted">Chargement...</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" id="accept-cgv-btn">J'accepte</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var cgvModal = document.getElementById('cgvModal');
+    cgvModal.addEventListener('show.bs.modal', function (event) {
+      var modalBody = cgvModal.querySelector('.modal-body');
+      fetch("{% url 'conditions_generales' %}")
+        .then(function(res){ return res.text(); })
+        .then(function(html){ modalBody.innerHTML = html; })
+        .catch(function(){ modalBody.innerHTML = '<div class="text-danger">Impossible de charger les conditions.</div>'; });
+    });
+    // Lorsque l'utilisateur clique sur "J'accepte" dans le modal, cocher la case et fermer le modal
+    document.addEventListener('click', function(e){
+      if (e.target && e.target.id === 'accept-cgv-btn'){
+        var checkbox = document.getElementById('accepte_cgv');
+        if (checkbox){ checkbox.checked = true; }
+        var modal = bootstrap.Modal.getInstance(document.getElementById('cgvModal'));
+        if (modal) { modal.hide(); }
+      }
+    });
+  </script>
+  <div class="mt-4">
+    <h5>Détails de l'offre :</h5>
+    <ul>
+      {% if forfait.description1 %}<li>{{ forfait.description1 }}</li>{% endif %}
+      {% if forfait.description2 %}<li>{{ forfait.description2 }}</li>{% endif %}
+      {% if forfait.description3 %}<li>{{ forfait.description3 }}</li>{% endif %}
+      {% if forfait.description4 %}<li>{{ forfait.description4 }}</li>{% endif %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

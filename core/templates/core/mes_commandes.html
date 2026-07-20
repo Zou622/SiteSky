@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+{% block title %}Mes commandes{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2>Historique de mes commandes</h2>
+  {% if commandes %}
+    <table class="table table-striped">
+      <thead class="table-danger">
+        <tr>
+          <th>Numéro</th>
+          <th>Date</th>
+          <th>Montant TTC</th>
+          <th>Statut</th>
+          <th>Mode</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cmd in commandes %}
+        <tr>
+          <td>{{ cmd.reference }}</td>
+          <td>{{ cmd.date_commande|date:"d/m/Y" }}</td>
+          <td>{{ cmd.montant_total|floatformat:0 }} GNF</td>
+          <td>
+            {% if cmd.statut == 'en_attente' %}
+              <span class="badge bg-warning">En attente</span>
+            {% elif cmd.statut == 'confirme' %}
+              <span class="badge bg-info">Confirmée</span>
+            {% elif cmd.statut == 'en_preparation' %}
+              <span class="badge bg-primary">En préparation</span>
+            {% elif cmd.statut == 'pret' %}
+              <span class="badge bg-success">Prête</span>
+            {% elif cmd.statut == 'annule' %}
+              <span class="badge bg-danger">Annulée</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if cmd.mode_reception == 'livraison' %}Livraison{% else %}Retrait agence{% endif %}
+          </td>
+          <td><a href="{% url 'commande_detail' cmd.id %}" class="btn btn-sm btn-outline-primary">Voir</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="alert alert-info">Vous n'avez pas encore de commandes.</p>
+  {% endif %}
+</div>
+{% endblock %}

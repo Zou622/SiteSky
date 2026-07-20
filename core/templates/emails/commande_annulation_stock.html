@@ -1,0 +1,22 @@
+<div style="font-family: Arial, sans-serif;">
+    <h2 style="color: #dc3545;">Commande {{ order.reference }} annulée</h2>
+
+    <p>Bonjour {{ order.nom }},</p>
+
+    <p>Nous sommes désolés de vous informer que votre commande a dû être annulée en raison d'un stock insuffisant.</p>
+
+    <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 15px 0;">
+        <p style="margin: 0;"><strong>Raison :</strong> {{ raison }}</p>
+    </div>
+
+    <p>Nous vous invitons à passer une nouvelle commande quand le stock sera reconstitué.</p>
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center;">
+        {% if logo_cid %}
+        <img src="{{ logo_cid }}" alt="SkyConnect" style="max-width: 150px;"><br>
+        {% endif %}
+        <p style="color: #6c757d; font-size: 0.8em;">
+            © {% now "Y" %} SkyConnect. Tous droits réservés.
+        </p>
+    </div>
+</div>

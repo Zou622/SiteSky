@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .header {
+            background-color: #761023;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        .details {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-left: 4px solid #761023;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .detail-row {
+            margin: 8px 0;
+        }
+        .label {
+            font-weight: bold;
+            color: #761023;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #761023;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 5px 10px 0;
+            text-align: center;
+        }
+        .cta-button:hover {
+            background-color: #5a0d1a;
+        }
+        .action-box {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .action-box h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="text-align:center;">
+                {% if logo_cid %}
+                <img src="cid:logo" alt="SkyConnect Logo" style="height:64px; width:auto; display:inline-block; margin:0 0 10px;">
+                {% else %}
+                <img src="{{ logo_url }}" alt="SkyConnect Logo" style="height:64px; width:auto; display:inline-block; margin:0 0 10px;">
+                {% endif %}
+            </div>
+            <h1 style="margin:0; font-size:20px;">🔔 NOUVELLE SOUSCRIPTION</h1>
+        </div>
+        <div class="content">
+            <h2>Nouvelle demande de souscription reçue</h2>
+            <p>Une nouvelle souscription a été enregistrée et attend votre suivi.</p>
+            
+            <div class="details">
+                <div class="detail-row"><span class="label">Nom du client :</span> {{ nom }}</div>
+                <div class="detail-row"><span class="label">Téléphone :</span> {{ telephone }}</div>
+                <div class="detail-row"><span class="label">Email :</span> {{ email }}</div>
+                <div class="detail-row"><span class="label">Offre demandée :</span> {{ forfait }}</div>
+                <div class="detail-row"><span class="label">Région :</span> {{ zone }}</div>
+                <div class="detail-row"><span class="label">Commune :</span> {{ commune }}</div>
+            </div>
+
+            <p><strong>Actions requises :</strong></p>
+            <ul>
+                <li><a href="https://skyconnect-sa.com/admin/core/demandesouscription" style="color: #761023; text-decoration: none; font-weight: bold;">Consultez l'interface d'administration pour accéder à cette demande</a></li>
+                <li>Cliquez sur "Prendre en charge" pour vous l'assigner</li>
+                <li>Contactez le client pour finaliser l'inscription</li>
+            </ul>
+
+            <p>Bonne vente ! 🚀<br>
+            <strong>L'équipe SkyConnect</strong></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 SkyConnect. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; color:#333; }
+        .container { max-width:600px; margin:0 auto; background:#f9f9f9; padding:20px; border-radius:8px; }
+        .header { background:#761023; color:#fff; padding:20px; text-align:center; border-radius:8px 8px 0 0; margin:-20px -20px 20px -20px; }
+        .content { background:#fff; padding:20px; border-radius:8px; }
+        .label { font-weight:bold; color:#761023; }
+        .footer { text-align:center; color:#666; font-size:12px; margin-top:20px; }
+        .details { background:#f0f7ff; padding:15px; border-left:4px solid #761023; border-radius:4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {% if logo_cid %}
+            <img src="cid:logo" alt="SkyConnect Logo" style="height:64px; display:block; margin:0 auto 10px;">
+            {% endif %}
+            <h1 style="margin:0; font-size:18px;">Nouveau message de contact</h1>
+        </div>
+        <div class="content">
+            <h2 style="color:#761023;">Détails du message</h2>
+            <div class="details">
+                <p><span class="label">Nom :</span> {{ message.nom }}</p>
+                <p><span class="label">Email :</span> {{ message.email }}</p>
+                <p><span class="label">Sujet :</span> {{ message.sujet }}</p>
+                <p style="white-space:pre-wrap;">{{ message.message }}</p>
+            </div>
+            <p>Merci,<br><strong>L'équipe SkyConnect</strong></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 SkyConnect</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+{% extends 'core/base.html' %}
+{% block title %}Forfaits Internet - Sky Connect{% endblock %}
+{% block content %}
+<script>
+function openSouscriptionForm(forfaitId) {
+  document.getElementById('forfaitIdInput').value = forfaitId;
+  document.querySelector('#souscriptionModal form').action = '/souscription/' + forfaitId + '/';
+  // s'assurer que les communes sont filtrées avant d'afficher la modale
+  updateCommunes();
+  var modal = new bootstrap.Modal(document.getElementById('souscriptionModal'));
+  modal.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const regionSel = document.getElementById('region');
+  const communeSel = document.getElementById('commune');
+  if (regionSel && communeSel) {
+    regionSel.addEventListener('change', updateCommunes);
+    // filtre initial (utile si la page présélectionne quelque chose)
+    updateCommunes();
+  }
+});
+
+function updateCommunes() {
+  const regionSel = document.getElementById('region');
+  const communeSel = document.getElementById('commune');
+  if (!regionSel || !communeSel) return;
+
+  const regionId = String(regionSel.value || '');
+  let anyVisible = false;
+
+  Array.from(communeSel.options).forEach(opt => {
+    if (!opt.value) return; // placeholder possible
+    const optRegion = opt.dataset.region ? String(opt.dataset.region) : '';
+    const match = (optRegion === regionId);
+    opt.hidden = !match;
+    opt.disabled = !match;
+    if (match) anyVisible = true;
+  });
+
+  communeSel.disabled = !anyVisible;
+  if (!anyVisible) {
+    communeSel.value = '';
+  } else {
+    // si la valeur courante n'est pas visible, on la réinitialise
+    const cur = communeSel.value;
+    if (cur) {
+      const curOpt = communeSel.querySelector('option[value="'+cur+'"]');
+      if (!curOpt || curOpt.hidden) communeSel.value = '';
+    }
+  }
+}
+</script>
+
+<section class="container my-5 fade-in-up delay-1" style="position:relative; z-index:1;">
+  <h2 class="text-center mb-4" style="color:var(--rouge-sky);">Nos Forfaits</h2>
+  <div class="row g-4">
+    {% for forfait in forfaits %}
+      <div class="col-md-4 d-flex align-items-stretch">
+        {% if forfait.bg_color %}
+          <div class="card shadow-sm h-100 card-offre" style="background-color: {{ forfait.bg_color }};">
+        {% else %}
+          <div class="card shadow-sm h-100">
+        {% endif %}
+          <div class="card-body d-flex flex-column justify-content-between text-start position-relative">
+            <h5 class="card-title mb-2">
+              <i class="bi {{ forfait.icone }} me-2" style="color:var(--rouge-sky);"></i>
+              {{ forfait.nom }}
+            </h5>
+            {% if forfait.image %}
+              <img src="{{ forfait.image.url }}" alt="{{ forfait.nom }}" class="img-fluid mb-2">
+            {% endif %}
+            <ul class="mb-2">
+              {% if forfait.descriptions.exists %}
+                {% for d in forfait.descriptions.all %}
+                  <li>{{ d.texte }}</li>
+                {% endfor %}
+              {% else %}
+                {% if forfait.description1 %}<li>{{ forfait.description1 }}</li>{% endif %}
+                {% if forfait.description2 %}<li>{{ forfait.description2 }}</li>{% endif %}
+                {% if forfait.description3 %}<li>{{ forfait.description3 }}</li>{% endif %}
+                {% if forfait.description4 %}<li>{{ forfait.description4 }}</li>{% endif %}
+              {% endif %}
+            </ul>
+            <div class="price-halo mb-2" style="color:var(--rouge-sky);">À partir de {{ forfait.prix|floatformat:0 }} GNF / mois</div>
+                <button type="button" class="btn btn-light mt-2 align-self-end" onclick="openSouscriptionForm({{ forfait.id }})">Souscrire</button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Formulaire modal pour FO -->
+<div class="modal fade" id="souscriptionModal" tabindex="-1" aria-labelledby="souscriptionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="/souscription/0/">
+      {% csrf_token %}
+      <input type="hidden" name="forfait_id" id="forfaitIdInput">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="souscriptionModalLabel">Souscription Internet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="region" class="form-label">Région</label>
+             <select name="region" id="region" class="form-select" required>
+              <option value="">-- Sélectionner une région --</option>
+              {% for region in regions %}
+                <option value="{{ region.id }}">{{ region.region }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="commune" class="form-label">Commune</label>
+            <select name="commune" id="commune" class="form-select" required>
+              <option value="">-- Sélectionner une commune --</option>
+              {% for commune in communes %}
+                <option value="{{ commune.id }}" data-region="{{ commune.zone.id }}">{{ commune.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Continuer</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

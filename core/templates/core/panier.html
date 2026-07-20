@@ -1,0 +1,53 @@
+<!-- filepath: c:\Users\mirab\Desktop\Stage\skyconnect-finalisation\core\templates\core\panier.html -->
+{% extends 'core/base.html' %}
+{% load price_helpers %}
+{% block title %}Mon panier{% endblock %}
+{% block content %}
+<h2>Mon panier</h2>
+{% if items %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            {% if not hide_product_prices %}
+                <th>Prix TTC</th>
+                <th>Sous-total TTC</th>
+            {% endif %}
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.produit.nom }}</td>
+            <td>
+                <form method="post" action="{% url 'changer_quantite' item.id %}">
+                    {% csrf_token %}
+                    <input type="number" name="quantite" value="{{ item.quantite }}" min="1" max="{{ item.produit.quantite }}" style="width:60px;">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">OK</button>
+                </form>
+            </td>
+            {% if not hide_product_prices %}
+                <td>{{ item.produit.prix_ttc|floatformat:0 }} GNF</td>
+                <td>{{ item.total_ligne|floatformat:0 }} GNF</td>
+            {% endif %}
+            <td>
+                <a href="{% url 'retirer_du_panier' item.id %}" class="btn btn-sm btn-outline-danger">Retirer</a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not hide_product_prices %}
+        <tr>
+                <td colspan="3" class="text-end"><strong>Total TTC :</strong></td>
+                <td colspan="2"><strong>{{ total|floatformat:0 }} GNF</strong></td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<a href="{% url 'vider_panier' %}" class="btn btn-outline-warning">Vider le panier</a>
+<a href="{% url 'commande_infos_client' %}" class="btn btn-outline-success">Valider la commande</a>
+{% else %}
+<p>Votre panier est vide.</p>
+{% endif %}
+{% endblock %}

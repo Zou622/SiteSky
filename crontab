@@ -1,0 +1,3 @@
+SHELL=/bin/sh
+PATH=/usr/local/bin:/usr/bin:/bin
+* * * * * root cd /app && /usr/local/bin/python manage.py sync_tickets_to_radius >> /var/log/radius_sync.log 2>&1

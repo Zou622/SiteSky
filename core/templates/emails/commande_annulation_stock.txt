@@ -1,0 +1,11 @@
+Commande {{ order.reference }} annulée
+
+Bonjour {{ order.nom }},
+
+Nous sommes désolés de vous informer que votre commande a dû être annulée en raison d'un stock insuffisant.
+
+Raison : {{ raison }}
+
+Nous vous invitons à passer une nouvelle commande quand le stock sera reconstitué.
+
+© {% now "Y" %} SkyConnect. Tous droits réservés.

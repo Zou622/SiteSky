@@ -1,0 +1,61 @@
+<div style="font-family: Arial, sans-serif;">
+    <h2 style="color: #0066cc;">Confirmation de votre commande {{ order.reference }}</h2>
+
+    <p>Bonjour {{ order.nom }},</p>
+
+    <p>Votre commande a été confirmée et sera livrée à l'adresse suivante :</p>
+
+    <div style="background-color: #f8f9fa; padding: 15px; margin: 15px 0; border-left: 4px solid #0066cc;">
+        <p style="margin: 0;">
+            <strong>Adresse de livraison :</strong><br>
+            {{ order.adresse_livraison }}<br>
+            {{ order.commune.nom }}<br>
+            Téléphone : {{ order.telephone }}
+        </p>
+    </div>
+
+    {% if not hide_product_prices %}
+    <h3>Détails de votre commande :</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: #f8f9fa;">
+            <th style="padding: 8px; text-align: left;">Produit</th>
+            <th style="padding: 8px; text-align: right;">Quantité</th>
+            <th style="padding: 8px; text-align: right;">Prix unitaire TTC</th>
+            <th style="padding: 8px; text-align: right;">Sous-total TTC</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td style="padding: 8px; border-top: 1px solid #dee2e6;">{{ item.produit.name }}</td>
+            <td style="padding: 8px; border-top: 1px solid #dee2e6; text-align: right;">{{ item.quantite }}</td>
+            <td style="padding: 8px; border-top: 1px solid #dee2e6; text-align: right;">{{ item.prix_unitaire }} GNF</td>
+            <td style="padding: 8px; border-top: 1px solid #dee2e6; text-align: right;">{{ item.total_ligne }} GNF</td>
+        </tr>
+        {% endfor %}
+        <tr style="font-weight: bold;">
+            <td colspan="3" style="padding: 8px; text-align: right;">Total TTC :</td>
+            <td style="padding: 8px; text-align: right;">{{ order.montant_total }} GNF</td>
+        </tr>
+    </table>
+    {% else %}
+    <p style="color: #333;">
+        <strong>Important :</strong> le montant de votre commande n'est pas affiché dans cet e-mail.
+        Notre équipe commerciale vous contactera prochainement pour vous communiquer le prix total
+        et confirmer les modalités de livraison.
+    </p>
+    {% endif %}
+
+    <p style="color: #6c757d; font-size: 0.9em; margin-top: 20px;">
+        Nous vous contacterons prochainement pour organiser la livraison.<br>
+        Pour toute question, n'hésitez pas à nous contacter.
+    </p>
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center;">
+        {% if logo_cid %}
+        <img src="{{ logo_cid }}" alt="SkyConnect" style="max-width: 150px;"><br>
+        {% endif %}
+        <p style="color: #6c757d; font-size: 0.8em;">
+            © {% now "Y" %} SkyConnect. Tous droits réservés.
+        </p>
+    </div>
+    
+</div>

@@ -1,0 +1,167 @@
+{% extends 'core/base.html' %}
+{% load price_helpers %}
+{% block title %}Infos commande - SKYCONNECT{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+  <div class="container my-4">
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        {% for field in form %}
+          {% for err in field.errors %}
+            <li>{{ err }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for err in form.non_field_errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<div class="container my-5">
+  <h2 class="mb-4">Informations client</h2>
+
+  <form method="post" action="">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="{{ form.nom.id_for_label }}" class="form-label">Nom complet</label>
+      <input type="text" name="{{ form.nom.html_name }}" id="{{ form.nom.id_for_label }}"
+             value="{{ form.nom.value|default:'' }}" required class="form-control"
+             oninvalid="this.setCustomValidity('Veuillez saisir votre nom.')"
+             oninput="this.setCustomValidity('')">
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
+      <div class="input-group">
+        <span class="input-group-text" style="background:var(--gris-eee); color:var(--gris-888);">+224</span>
+        <input type="text" name="{{ form.telephone.html_name }}" id="{{ form.telephone.id_for_label }}"
+               value="{{ form.telephone.value|default:'' }}" maxlength="9" pattern="[0-9]{9}" required
+               class="form-control"
+               oninvalid="this.setCustomValidity('Veuillez saisir un numéro valide (9 chiffres, sans +224).')"
+               oninput="this.setCustomValidity('')">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+      <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.id_for_label }}"
+             value="{{ form.email.value|default:'' }}" class="form-control">
+    </div>
+
+    <!-- Nouvelle zone : Ville (région) -> Commune filtrée -> Adresse détaillée -->
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="region_id" class="form-label">Ville</label>
+        <select id="region_id" name="region_id" class="form-select" {% if form.choix_retrait.value == 'livraison' %}required{% endif %}
+              oninvalid="this.setCustomValidity('Veuillez sélectionner une ville.')"
+              oninput="this.setCustomValidity('')">
+          <option value="">-- Sélectionner une ville --</option>
+          {% for r in regions %}
+            <option value="{{ r.id }}"
+              {% if form.region.value and form.region.value == r.region %}selected{% endif %}>
+              {{ r.region }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label for="commune_id" class="form-label">Commune</label>
+        <select id="commune_id" name="commune_id" class="form-select" required
+              oninvalid="this.setCustomValidity('Veuillez sélectionner une commune.')"
+              oninput="this.setCustomValidity('')">
+          <option value="">-- Sélectionner une commune --</option>
+          {% for c in communes %}
+            <option value="{{ c.id }}" data-region="{{ c.zone.id }}"
+              {% if form.commune.value and form.commune.value == c.nom %}selected{% endif %}>
+              {{ c.nom }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_adresse" class="form-label">Adresse détaillée (numéro, quartier, repère) <span class="text-muted">(optionnel)</span></label>
+      <textarea name="adresse" id="id_adresse" rows="3" class="form-control">{{ form.adresse.value|default:'' }}</textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mode de retrait</label>
+      <div>
+        {{ form.choix_retrait }}
+      </div>
+    </div>
+
+    <div class="d-grid">
+      <button type="submit" class="btn btn-danger btn-lg">Valider et continuer</button>
+    </div>
+  </form>
+
+  <!-- Récapitulatif panier inchangé -->
+  {% if not hide_product_prices %}
+  <div class="mt-4">
+    <h5>Détails du panier</h5>
+    <ul class="list-group mt-2">
+      {% for item in items %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold">{{ item.produit.nom }}</div>
+            <div class="small text-muted">Qté: {{ item.quantite }}</div>
+            <div class="small text-muted">Prix HT : {{ item.produit.prix|floatformat:0 }} GNF | TVA ({{ item.produit.taux_tva }}%) : {{ item.produit.tva_montant|floatformat:0 }} GNF | Prix TTC : {{ item.produit.prix_ttc|floatformat:0 }} GNF</div>
+          </div>
+          <span class="badge bg-secondary rounded-pill">
+            {% if item.total_ligne %}{{ item.total_ligne|floatformat:0 }} GNF
+            {% else %}{{ item.quantite|add:"0" }} x {{ item.produit.prix_ttc|floatformat:0 }} GNF{% endif %}
+          </span>
+        </li>
+      {% endfor %}
+      <li class="list-group-item d-flex justify-content-between fw-bold">
+        <span>Total TTC</span>
+        <span>{{ total|floatformat:0 }} GNF</span>
+      </li>
+    </ul>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const regionSel = document.getElementById('region_id');
+  const communeSel = document.getElementById('commune_id');
+
+  function updateCommunes() {
+    const regionId = String(regionSel.value || '');
+    let any = false;
+    Array.from(communeSel.options).forEach(opt => {
+      if (!opt.value) return;
+      const optRegion = opt.dataset.region ? String(opt.dataset.region) : '';
+      const match = (optRegion === regionId);
+      opt.hidden = !match;
+      opt.disabled = !match;
+      if (match) any = true;
+    });
+    communeSel.disabled = !any;
+
+    // Si la commune sélectionnée ne correspond plus à la région choisie, réinitialiser.
+    if (communeSel.value) {
+      const currentOpt = communeSel.selectedOptions[0];
+      if (currentOpt && String(currentOpt.dataset.region) !== regionId) {
+        communeSel.value = '';
+      }
+    }
+
+    if (!any) communeSel.value = '';
+    // si il y a des options visibles et aucune sélection, garder placeholder
+  }
+
+  regionSel.addEventListener('change', updateCommunes);
+  // initial
+  updateCommunes();
+});
+</script>
+{% endblock %}

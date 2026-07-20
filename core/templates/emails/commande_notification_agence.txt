@@ -1,0 +1,49 @@
+🔔 NOUVELLE COMMANDE RETRAIT AGENCE - {{ order.reference }}
+
+Une nouvelle commande a été enregistrée et nécessite votre attention !
+
+═══════════════════════════════════════════════════════════════
+
+INFORMATIONS CLIENT
+
+Nom : {{ order.nom }}
+Téléphone : {{ order.telephone }}
+Email : {{ order.email }}
+
+═══════════════════════════════════════════════════════════════
+
+DÉTAILS DE LA COMMANDE
+
+{% for item in items %}
+• {{ item.produit.nom }}
+  Quantité : {{ item.quantite }}
+  Prix unitaire : {{ item.prix_unitaire|floatformat:0 }} GNF
+  Sous-total : {{ item.total_ligne|floatformat:0 }} GNF
+
+{% endfor %}
+───────────────────────────────────────────────────────────────
+TOTAL TTC : {{ order.montant_total|floatformat:0 }} GNF
+
+═══════════════════════════════════════════════════════════════
+
+DÉTAILS DU RETRAIT
+
+Agence : {{ order.agence.nom }}
+Délai de retrait : 48 heures
+
+═══════════════════════════════════════════════════════════════
+
+✓ ACTIONS REQUISES
+
+1. Consultez votre tableau de bord commercial pour accéder à cette commande
+2. Cliquez sur "Prendre en charge" pour vous l'assigner
+3. Préparez les articles listés ci-dessus
+4. Stockez les articles à {{ order.agence.nom }} avec le numéro {{ order.reference }}
+
+⚠️ IMPORTANT : Le client doit récupérer sa commande dans les 48 heures.
+   Après ce délai, vous serez autorisé à l'annuler.
+
+Merci de votre efficacité ! 🚀
+L'équipe SkyConnect
+
+© 2026 SkyConnect. Tous droits réservés.

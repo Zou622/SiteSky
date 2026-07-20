@@ -1,0 +1,13 @@
+Bonjour {{ nom }},
+
+Merci pour votre achat. Voici vos identifiants pour vous connecter au hotspot :
+
+Type : {{ ticket_type.nom }}
+Identifiant : {{ ticket.identifiant }}
+Mot de passe : {{ ticket.mot_de_passe }}
+Expire le : {{ ticket.date_expiration }}
+
+Si vous avez des questions, répondez à cet email.
+
+Bonne connexion,
+L'équipe SkyConnect

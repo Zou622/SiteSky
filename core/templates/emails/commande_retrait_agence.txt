@@ -1,0 +1,29 @@
+Nouvelle commande #{{ order.reference }}
+
+Une nouvelle commande nécessite votre attention.
+
+Client :
+{{ order.nom }}
+{{ order.telephone }}
+{{ order.email }}
+
+{% if not hide_product_prices %}
+Détails de la commande :
+{% for item in items %}
+- {{ item.produit.nom }} : {{ item.quantite }} x {{ item.prix_unitaire }} GNF = {{ item.total_ligne }} GNF
+{% endfor %}
+
+Total TTC : {{ order.montant_total }} GNF
+
+{% else %}
+IMPORTANT : le montant de votre commande ne figure pas dans cet e-mail.
+Notre équipe commerciale vous contactera prochainement pour vous communiquer le prix total.
+
+{% endif %}
+Mode de réception : Retrait en agence
+Agence : {{ order.agence.nom }}
+
+À préparer pour le client dans les meilleurs délais.
+Le client dispose de 48h pour récupérer sa commande.
+
+© {% now "Y" %} SkyConnect

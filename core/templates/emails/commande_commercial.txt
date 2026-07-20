@@ -1,0 +1,48 @@
+{% if order.mode_reception == 'agence' %}
+🔔 NOUVELLE COMMANDE RETRAIT AGENCE - {{ order.reference }}
+{% else %}
+🚚 NOUVELLE COMMANDE LIVRAISON - {{ order.reference }}
+{% endif %}
+
+INFORMATIONS CLIENT
+
+Nom : {{ order.nom }}
+Téléphone : {{ order.telephone }}
+Email : {{ order.email }}
+{% if order.mode_reception == 'agence' %}
+Agence de retrait : {{ order.agence.nom }}
+{% else %}
+Commune : {{ order.commune.nom }}
+Adresse : {{ order.adresse_livraison }}
+{% endif %}
+
+═══════════════════════════════════════════════════════════════
+
+DÉTAILS DE LA COMMANDE
+
+{% for item in items %}
+• {{ item.produit.nom }}
+  Quantité : {{ item.quantite }}
+  Prix unitaire : {{ item.prix_unitaire|floatformat:0 }} GNF
+  Sous-total : {{ item.total_ligne|floatformat:0 }} GNF
+
+{% endfor %}
+───────────────────────────────────────────────────────────────
+TOTAL TTC : {{ order.montant_total|floatformat:0 }} GNF
+
+═══════════════════════════════════════════════════════════════
+
+Actions requises :
+
+• Consultez votre tableau de bord commercial pour accéder à cette commande
+• Cliquez sur "Prendre en charge" pour vous l'assigner
+{% if order.mode_reception == 'agence' %}
+• Préparez et stockez la commande à {{ order.agence.nom }}
+{% else %}
+• Organisez la livraison et contactez le client pour coordonner
+{% endif %}
+
+Bonne vente ! 🚀
+L'équipe SkyConnect
+
+© 2026 SkyConnect. Tous droits réservés.

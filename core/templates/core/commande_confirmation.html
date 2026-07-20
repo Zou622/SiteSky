@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+{% load price_helpers %}
+{% block title %}Confirmation commande{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2>Confirmation de votre commande</h2>
+
+  {% if erreurs %}
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        {% for e in erreurs %}<li>{{ e }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <h4>Vos informations</h4>
+  <ul>
+    <li><strong>Nom :</strong> {{ infos.nom }}</li>
+    <li><strong>Téléphone :</strong> {{ infos.telephone }}</li>
+    <li><strong>Email :</strong> {{ infos.email }}</li>
+    <li><strong>Mode de retrait :</strong> {% if infos.choix_retrait == 'livraison' %}Livraison à domicile{% else %}Retrait en agence{% endif %}</li>
+    {% if infos.adresse %}<li><strong>Adresse :</strong> {{ infos.adresse }}</li>{% endif %}
+  </ul>
+
+  {% if agences %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="agence" class="form-label">Choisissez l'agence pour retrait</label>
+        <select id="agence" name="agence_id" class="form-select" required>
+          <option value="">-- Sélectionner une agence --</option>
+          {% for a in agences %}
+            <option value="{{ a.id }}">{{ a.nom }} — {{ a.adresse }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Confirmer la commande</button>
+        <a href="{% url 'commande_infos_client' %}" class="btn btn-secondary">Modifier</a>
+      </div>
+    </form>
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success">Confirmer la commande</button>
+      <a href="{% url 'commande_infos_client' %}" class="btn btn-secondary">Modifier</a>
+    </form>
+  {% endif %}
+
+  {% if not hide_product_prices %}
+  <hr>
+  <h4>Récapitulatif du panier</h4>
+  <table class="table">
+    <thead>
+      <tr><th>Produit</th><th>Qté</th><th>Prix HT</th><th>TVA</th><th>Prix TTC</th><th>Sous-total TTC</th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.produit.nom }}</td>
+          <td>{{ item.quantite }}</td>
+          <td>
+            {% if item.produit.prix %}{{ item.produit.prix|floatformat:0 }} GNF{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.produit.tva_montant %}{{ item.produit.tva_montant|floatformat:0 }} GNF ({{ item.produit.taux_tva }}%){% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.produit.prix_ttc %}{{ item.produit.prix_ttc|floatformat:0 }} GNF{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.total_ligne %}{{ item.total_ligne|floatformat:0 }} GNF
+            {% else %}{{ item.quantite|add:"0" }} x {% if item.produit.prix_ttc %}{{ item.produit.prix_ttc|floatformat:0 }} GNF{% else %}—{% endif %}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      <tr><td colspan="5" class="text-end fw-bold">Total TTC</td><td class="fw-bold">{{ total|floatformat:0 }} GNF</td></tr>
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}
