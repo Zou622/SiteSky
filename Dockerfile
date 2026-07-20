@@ -10,12 +10,12 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 # Installer les dépendances système légères
 RUN apt-get update && \
     apt-get install -y \
-        postgresql-client \
-        default-libmysqlclient-dev \
-        build-essential \
-        pkg-config \
-        cron \
-        curl && \
+    postgresql-client \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    cron \
+    curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Copier uniquement requirements pour profiter du cache Docker
@@ -48,6 +48,6 @@ RUN chown -R app:app /app
 USER app
 
 # Expose (documentational)
-EXPOSE 8000
+EXPOSE 80
 
 # CMD est géré par docker-compose (gunicorn)
