@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+{% block title %}Détails commande {{ commande.reference }}{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2>Détails de la commande {{ commande.reference }}</h2>
+
+  <h4>Informations de la commande</h4>
+  <ul>
+    <li><strong>Référence :</strong> {{ commande.reference }}</li>
+    <li><strong>Date :</strong> {{ commande.date_commande|date:"d/m/Y H:i" }}</li>
+    <li><strong>Statut :</strong>
+      {% if commande.statut == 'en_attente' %}En attente
+      {% elif commande.statut == 'confirme' %}Confirmée
+      {% elif commande.statut == 'en_preparation' %}En préparation
+      {% elif commande.statut == 'pret' %}Prête pour retrait
+      {% elif commande.statut == 'livre' %}Livrée
+      {% elif commande.statut == 'annule' %}Annulée
+      {% endif %}
+    </li>
+  </ul>
+
+  <h4>Informations client</h4>
+  <ul>
+    <li><strong>Nom :</strong> {{ commande.nom }}</li>
+    <li><strong>Téléphone :</strong> {{ commande.telephone }}</li>
+    <li><strong>Email :</strong> {{ commande.email }}</li>
+    <li><strong>Mode de retrait :</strong> {% if commande.mode_reception == 'livraison' %}Livraison à domicile{% else %}Retrait en agence{% endif %}</li>
+    {% if commande.adresse_livraison %}<li><strong>Adresse :</strong> {{ commande.adresse_livraison }}</li>{% endif %}
+    {% if commande.agence %}<li><strong>Agence :</strong> {{ commande.agence.nom }} — {{ commande.agence.adresse }}</li>{% endif %}
+  </ul>
+
+  <hr>
+  <h4>Récapitulatif des produits</h4>
+  <table class="table">
+    <thead>
+      <tr><th>Produit</th><th>Qté</th><th>Prix HT</th><th>TVA</th><th>Prix TTC</th><th>Sous-total TTC</th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.produit.nom }}</td>
+          <td>{{ item.quantite }}</td>
+          <td>
+            {% if item.produit.prix %}{{ item.produit.prix|floatformat:0 }} GNF{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.produit.tva_montant %}{{ item.produit.tva_montant|floatformat:0 }} GNF ({{ item.produit.taux_tva }}%){% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.produit.prix_ttc %}{{ item.produit.prix_ttc|floatformat:0 }} GNF{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.total_ligne %}{{ item.total_ligne|floatformat:0 }} GNF
+            {% else %}{{ item.quantite|add:"0" }} x {% if item.produit.prix_ttc %}{{ item.produit.prix_ttc|floatformat:0 }}{% else %}—{% endif %} GNF{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      <tr><td colspan="5" class="text-end fw-bold">Total TTC</td><td class="fw-bold">{{ commande.montant_total|floatformat:0 }} GNF</td></tr>
+    </tbody>
+  </table>
+
+  <a href="{% url 'accueil' %}" class="btn btn-secondary">Retour à l'accueil</a>
+</div>
+{% endblock %}

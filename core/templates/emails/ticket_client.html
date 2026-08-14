@@ -1,0 +1,18 @@
+<html>
+  <body>
+    <p>Bonjour {{ nom }},</p>
+
+    <p>Merci pour votre achat. Voici vos identifiants pour vous connecter au hotspot :</p>
+
+    <ul>
+      <li><strong>Type :</strong> {{ ticket_type.nom }}</li>
+      <li><strong>Identifiant :</strong> {{ ticket.identifiant }}</li>
+      <li><strong>Mot de passe :</strong> {{ ticket.mot_de_passe }}</li>
+      <li><strong>Activation :</strong> La durée commencera à la première connexion au hotspot.</li>
+    </ul>
+
+    <p>Si vous avez des questions, répondez à cet email.</p>
+
+    <p>Bonne connexion,<br/>L'équipe SkyConnect</p>
+  </body>
+</html>

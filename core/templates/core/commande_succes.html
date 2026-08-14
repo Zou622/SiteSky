@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load price_helpers %}
+{% block title %}Commande validée{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    <h2 class="card-title mt-3">Merci pour votre commande !</h2>
+                    
+                    {% with derniere_commande=request.session.derniere_commande %}
+                    {% if derniere_commande %}
+                        <p class="lead">Votre numéro de commande : <strong>{{ derniere_commande.reference }}</strong></p>
+                        {% if not hide_product_prices %}
+                        <p>Total : <strong>{{ derniere_commande.total|floatformat:0 }} GNF</strong></p>
+                        {% endif %}
+                        
+                        {% if derniere_commande.mode == 'agence' %}
+                            <div class="alert alert-info">
+                                <h4>Instructions de retrait</h4>
+                                <p>Votre commande sera disponible à l'agence {{ derniere_commande.agence_nom }}.</p>
+                                <p><strong>Important :</strong> Vous disposez de 48h pour retirer votre commande.</p>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <h4>Livraison</h4>
+                                <p>Votre commande sera livrée à l'adresse indiquée.</p>
+                                <p>Nous vous contacterons pour organiser la livraison.</p>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <hr>
+                    <p>Un email de confirmation vous a été envoyé.</p>
+                    <div class="mt-4">
+                        <a href="{% url 'accueil' %}" class="btn btn-primary">Retour à l'accueil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends 'core/base.html' %}
+{% block title %}Zone de couverture - SKYCONNECT{% endblock %}
+
+{% block content %}
+<style>
+.carte-guinee {
+  max-width: 650px;
+  margin: auto;
+  box-shadow: 0 4px 32px #ffd70033;
+  border-radius: 18px;
+  background: linear-gradient(120deg,#fffbe6 80%,#fff 100%);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.carte-guinee::before {
+  content: "";
+  position: absolute;
+  left: -80px; top: -80px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, #ffd70055 0%, transparent 80%);
+  z-index: 0;
+  pointer-events: none;
+  animation: pulseGlow 2.5s infinite alternate;
+}
+@keyframes pulseGlow {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.carte-guinee svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+  transition: filter 0.4s;
+}
+.carte-guinee svg:hover {
+  filter: drop-shadow(0 0 24px #ffd70088);
+}
+.couverture-badge {
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(90deg,#ffd700,#fffbe6);
+  color: #d90429;
+  border-radius: 1.5rem;
+  padding: 0.7rem 2rem;
+  box-shadow: 0 2px 12px #ffd70033;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  animation: badgePulse 1.5s infinite alternate;
+}
+@keyframes badgePulse {
+  0% { box-shadow: 0 2px 12px #ffd70033;}
+  100% { box-shadow: 0 4px 24px #ffd70066;}
+}
+.couverture-titre {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: dark;
+  text-shadow: 0 2px 8px #d9042940;
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 1s;
+}
+.couverture-texte {
+  font-size: 1.15rem;
+  color: dark;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1.2s 0.3s backwards;
+}
+.badge.bg-primary {
+  font-size:1rem;
+  background: linear-gradient(90deg,#ffd700,#fffbe6);
+  color: #d90429;
+  border-radius: 1.5rem;
+  font-weight: bold;
+  animation: badgePulse 1.5s infinite alternate;
+  box-shadow: 0 2px 12px #ffd70033;
+  border: none;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px);}
+  to { opacity: 1; transform: none;}
+}
+/* Animation sur les régions */
+.ville-supportee {
+  fill: #9b0707;
+  transition: fill 0.3s, filter 0.3s;
+  cursor: pointer;
+}
+.ville-supportee:hover {
+  fill: #f1f1f1;
+  filter: drop-shadow(0 0 12px #d9042999);
+}
+.zone-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px #ffd70022;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 6px solid #ffd700;
+  transition: box-shadow 0.3s;
+}
+.zone-card:hover {
+  box-shadow: 0 6px 32px #ffd70044;
+}
+.zone-card h4 {
+  color: #d90429;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+}
+.commune-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+.commune-badge {
+  background: dark;
+  color: dark;
+  border-radius: 1rem;
+  font-weight: 500;
+  padding: 0.35rem 1.1rem;
+  font-size: 1rem;
+  box-shadow: 0 1px 6px #ffd70033;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.commune-badge:hover {
+  background: #fffbe6;
+  color: #d90429;
+}
+.text-muted {
+  font-style: italic;
+  color: #a00320 !important;
+}
+.zone-list {
+  margin: 2.5rem auto 0 auto;
+  max-width: 1200px; /* Largeur augmentée */
+  text-align: left;
+}
+.zone-block {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px #d9042922;
+  padding: 2rem 3rem; /* Plus d’espace */
+  margin-bottom: 0;
+  border-left: 8px solid #d90429;
+  transition: box-shadow 0.3s;
+}
+.zone-block:hover {
+  box-shadow: 0 6px 32px #d9042944;
+}
+.zone-list {
+  margin: 2.5rem auto 0 auto;
+  max-width: 100%;
+  text-align: left;
+}
+.zone-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px #ffd70022;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 6px solid #ffd700;
+  transition: box-shadow 0.3s;
+  max-width: 100%;
+  width: 100%;
+}
+.zone-card h4 {
+  color: #d90429;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+}
+.commune-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+.commune-badge {
+  background: dark;
+  color: dark;
+  border-radius: 1rem;
+  font-weight: 500;
+  padding: 0.35rem 1.1rem;
+  font-size: 1rem;
+  box-shadow: 0 1px 6px #ffd70033;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.commune-badge:hover {
+  background: #fffbe6;
+  color: #d90429;
+}
+</style>
+
+<section class="container-fluid my-5 px-0">
+  <div class="text-center mb-4">
+    <h1 class="couverture-titre">SKYCONNECT couvre Conakry !</h1>
+    <p class="couverture-texte">
+      Profitez d’Internet haut débit, fiable et rapide <br>
+      <span class="fw-bold">dans toutes les communes de Conakry et partout en Guinée</span>.<br>
+      Nos équipes vous accompagnent pour une connexion sans limite.
+    </p>
+  </div>
+  <div style="position:relative; display:block; width:100%; max-width:100%;">
+    <iframe src="https://www.google.com/maps/d/embed?mid=1ndl52xsPR9XR6XWNxNyyJKnXmt6inxc&ehbc=2E312F&noprof=1" width="100%" height="480" style="border:0;"></iframe>
+  </div>
+  <div class="zone-list mt-5">
+    {% for zone in zones %}
+      <div class="zone-card mb-4">
+        <h4>{{ zone.region }}</h4>
+        <div class="commune-list">
+          {% for commune in zone.communes.all %}
+            <span class="commune-badge">{{ commune.nom }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

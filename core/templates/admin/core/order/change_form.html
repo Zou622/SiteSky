@@ -1,0 +1,40 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block submit_buttons_bottom %}
+  {% if original %}
+    <input type="hidden" name="take_charge" id="id_take_charge" value="0">
+    <div class="submit-row">
+      {{ block.super }}
+      <input type="button" class="default" value="{% trans "Quitter" %}" style="margin-left: 10px; margin-top: 5px;" onclick="window.location.href='{% url 'admin:core_order_changelist' %}'" />
+      {% if is_commercial and not original.commercial and original.statut == 'en_attente' %}
+        <input type="submit" class="default" value="{% trans "Prendre en charge" %}" style="margin-left: 10px; margin-top: 5px;" onclick="document.getElementById('id_take_charge').value='1';" />
+      {% endif %}
+    </div>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if hide_product_prices %}
+    <style>
+      /* Masquer le champ montant_total du formulaire principal */
+      .field-montant_total {
+        display: none !important;
+      }
+      
+      /* Masquer les colonnes de prix dans les items inline */
+      .inline-related table thead th:nth-child(4),  /* prix_unitaire */
+      .inline-related table thead th:nth-child(5),  /* quantite */
+      .inline-related table thead th:nth-child(6),  /* total_ligne */
+      .inline-related table tbody td:nth-child(4),  /* prix_unitaire */
+      .inline-related table tbody td:nth-child(5),  /* quantite */
+      .inline-related table tbody td:nth-child(6)   /* total_ligne */
+      {
+        display: none !important;
+      }
+    </style>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

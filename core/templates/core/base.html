@@ -1,0 +1,1175 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}SKYCONNECT{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+<!-- Bootstrap Icons CDN -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- FontAwesome CDN -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Google Sign-In SDK removed -->
+
+  <style>
+
+    .carousel-item img {
+
+  width: 100%;
+
+  height: 400px;      /* Choisis la hauteur qui te convient */
+
+  object-fit: cover;
+
+  object-position: center;
+
+  border-radius: 12px;
+
+  display: block;
+
+}
+
+    .navbar-logo img {
+
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.3s;
+
+}
+
+
+
+
+      .carousel-item img {
+
+    width: 100%;
+
+    height: 400px;      /* Choisis la hauteur qui te convient */
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 12px;
+
+    display: block;
+
+  }
+
+      .navbar-logo img {
+
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.3s;
+
+  }
+
+     body {
+
+    background: linear-gradient(120deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 40%, var(--bg-gradient-end) 100%);
+
+    background-size: 200% 200%;
+
+    animation: bgMove 8s ease-in-out infinite alternate;
+
+  }
+
+  @keyframes bgMove {
+
+    0% { background-position: 0% 50%; }
+
+    100% { background-position: 100% 50%; }
+
+  }
+
+      :root {
+
+      /* === COULEURS PRINCIPALES SKYCONNECT === */
+
+      --rouge-sky: #761023;
+
+      --rouge-sky-light: #a61a2e;
+
+      --rouge-sky-lighter: #bb5165;
+
+      --rouge-vif: #d90429;
+
+      --rouge-fonce: #a00320;
+
+   
+
+      /* === COULEURS NEUTRES === */
+
+      --noir: #232323;
+
+      --blanc: #ffffff;
+
+      --gris-fonce: #333333;
+
+      --gris-moyen: #666666;
+
+      --gris-clair: #999999;
+
+      --gris-tres-clair: #e9ecef;
+
+      --gris-ultra-clair: #f0f0f0;
+
+   
+
+      /* === COULEURS D'ACCENT === */
+
+      --or: #ffd700;
+
+      --or-light: #ffd70020;
+
+      --or-light-80: #ffd70080;
+
+   
+
+      /* === COULEURS DE FEEDBACK === */
+
+      --success: #28a745;
+
+      --success-light: #d4edda;
+
+      --success-lighter: #c3e6cb;
+
+      --warning: #ffc107;
+
+      --warning-light: #fff3cd;
+
+      --warning-lighter: #ffeaa7;
+
+   
+
+      /* === COULEURS DE FOND === */
+
+      --fond-page: #f5f7fa;
+
+      --bg-gradient-start: #e4d8db;
+
+      --bg-gradient-mid: #fffbe6;
+
+      --bg-gradient-end: #e9dee0;
+
+   
+
+      /* === TRANSPARENCES SHADOW === */
+
+      --shadow-rouge-15: rgba(118, 16, 35, 0.15);
+
+      --shadow-rouge-25: rgba(217, 4, 41, 0.25);
+
+      --shadow-rouge-30: rgba(118, 16, 35, 0.3);
+
+      --shadow-rouge-40: rgba(118, 16, 35, 0.4);
+
+      --shadow-rouge-80: rgba(220, 0, 41, 0.08);
+
+      --shadow-rouge-12: rgba(220, 0, 41, 0.12);
+
+      --shadow-or-40: rgba(255, 215, 0, 0.4);
+
+      --shadow-or-50: rgba(255, 215, 0, 0.5);
+
+      --shadow-or-80: rgba(255, 215, 0, 0.5);
+
+      --shadow-blanc: rgba(255, 255, 255, 0.5);
+
+      --overlay-noir-85: rgba(35, 35, 35, 0.85);
+
+   
+
+      /* === VARIANTES ADDITIONNELLES === */
+
+      --noir-222: #222222;
+
+      --rouge-cf: #cf0606;
+
+      --shine-white: linear-gradient(120deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 100%);
+
+      --gris-eee: #eeeeee;
+
+      --gris-888: #888888;
+
+      --shadow-rouge-text: 0 2px 8px var(--shadow-rouge-25);
+
+      --bleu-sky: #2596be;
+
+      --blanc-rgba: rgba(255,255,255,0.5);
+
+      --rouge-vif-dark: #d90429;
+
+      --gris-2c2324: #2c2324;
+
+      }
+
+
+      body {
+
+          font-family: 'Segoe UI', sans-serif;
+
+          background-color: var(--fond-page);
+
+          margin: 0;
+
+      }
+
+
+
+      /* HEADER */
+
+      .navbar {
+
+      background-color: var(--blanc) !important;
+
+      color: var(--noir) !important;
+
+      min-height: 56px;
+
+      padding-top: 8px;
+
+      padding-bottom: 8px;
+
+      transition: min-height 0.3s, padding 0.3s, top 0.3s;
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 1020;
+
+      }
+
+
+      .navbar.compact {
+
+      min-height: 40px;
+
+      padding-top: 2px;
+
+      padding-bottom: 2px;
+
+      }
+
+      .navbar-brand,
+
+      .navbar-logo {
+
+      transition: opacity 0.3s, height 0.3s;
+
+      }
+
+      .navbar.compact .navbar-logo {
+
+      opacity: 0;
+
+      height: 0;
+
+      overflow: hidden;
+
+      padding: 0;
+
+      margin: 0;
+
+      }
+
+      .navbar.hide {
+
+      top: -70px;
+
+      }
+
+
+      .navbar-brand {
+
+          font-weight: 700;
+
+          font-size: 1.4rem;
+
+      }
+
+
+      .nav-link {
+
+          font-weight: 500;
+
+      }
+
+
+      .nav-link.active,
+
+      .nav-link:hover {
+
+          color: var(--blanc);
+
+          text-decoration: underline;
+
+      }
+
+
+      /* FOOTER */
+
+
+
+      .footer a, .footer a:hover {
+
+      color: var(--blanc) !important;
+
+      text-shadow: none !important;
+
+  }
+
+    
+
+      /* CONTENU */
+
+      main {
+
+          padding-top: 20px;
+
+          padding-bottom: 20px;
+
+      }
+
+
+  .navbar-glow {
+
+    box-shadow: 0 0 24px 4px var(--rouge-sky-lighter), 0 4px 24px var(--shadow-rouge-15);
+
+    border-bottom: 2px solid var(--blanc);
+
+    animation: glowNav 2s infinite alternate;
+
+  }
+
+  @keyframes glowNav {
+
+    0% { box-shadow: 0 0 24px 4px var(--rouge-sky-lighter), 0 4px 24px var(--shadow-rouge-15);} 
+
+    100% { box-shadow: 0 0 48px 8px var(--blanc), 0 4px 24px var(--shadow-rouge-15);} 
+
+  }
+
+
+  /* Effet sur le bouton Souscrire */
+
+  .btn-animated {
+
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    box-shadow: 0 2px 8px rgba(220,0,41,0.10);
+
+    background: var(--blanc);
+
+    color: var(--rouge-sky);
+
+    font-weight: bold;
+
+    border: 2px solid var(--rouge-sky);
+
+  }
+
+  .btn-animated:hover {
+
+    transform: scale(1.12) rotate(-2deg);
+
+    box-shadow: 0 4px 16px var(--shadow-or-80);
+
+    background: var(--rouge-sky);
+
+    color: var(--blanc);
+
+    border-color: var(--rouge-sky);
+
+  }
+
+  /* Style minimal pour les cartes d'offres quand une couleur d'arrière-plan est appliquée */
+
+  .card-offre {
+    color: #ffffff !important;
+  }
+  .card-offre .btn-animated {
+    background: rgba(255,255,255,0.95);
+    color: var(--rouge-sky);
+  }
+
+
+
+  /* Footer lumineux et animé */
+
+  .footer,
+
+  .footer-glow {
+
+      background: var(--noir) !important; /* Noir élégant */
+
+      color: var(--blanc) !important;
+
+      box-shadow: none !important;
+  color: var(--blanc);
+
+  font-weight: 600;
+
+  letter-spacing: 1px;
+
+  box-shadow: 0 2px 16px var(--shadow-rouge-40);
+
+}
+
+@keyframes bandeauAnim {
+
+  0% { background-position: 0%;}
+
+  100% { background-position: 100%;}
+
+}
+
+#bg-shapes {
+
+  position: fixed;
+
+  top: 0; left: 0; width: 100vw; height: 100vh;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+}
+
+.shape {
+
+  position: absolute;
+
+  border-radius: 50%;
+
+  opacity: 0.18;
+
+  filter: blur(8px);
+
+  animation: floatShape 12s infinite alternate;
+
+}
+
+.shape1 { width: 220px; height: 220px; background: var(--or); left: 8vw; top: 12vh; animation-delay: 0s;}
+
+.shape2 { width: 180px; height: 180px; background: var(--rouge-vif); right: 10vw; top: 30vh; animation-delay: 2s;}
+
+.shape3 { width: 140px; height: 140px; background: var(--rouge-fonce); left: 40vw; bottom: 8vh; animation-delay: 4s;}
+
+@keyframes floatShape {
+
+  0% { transform: translateY(0) scale(1);}
+
+  100% { transform: translateY(-40px) scale(1.08);}
+
+}
+
+/* Footer : effet hover identique pour tous les boutons */
+
+.footer .btn-outline-light:hover,
+
+.footer .btn-outline-light:focus {
+
+    background: var(--blanc) !important;
+
+    color: var(--gris-fonce) !important;
+
+    border-color: var(--blanc) !important;
+
+    box-shadow: 0 2px 8px var(--shadow-blanc);
+
+    transform: translateY(-2px) scale(1.04);
+
+}
+
+.navbar .navbar-brand,
+
+.navbar .nav-link,
+
+.navbar .bi {
+
+    color: var(--noir) !important;
+
+    text-shadow: none !important;
+
+}
+
+
+
+.navbar .nav-link.active,
+
+.navbar .nav-link:hover {
+
+    color: var(--rouge-sky-lighter) !important;
+
+    text-decoration: underline;
+
+}
+
+
+
+.custom-submenu {
+
+  display: none;
+
+  position: absolute;
+
+  left: 0;
+
+  top: 100%;
+
+  min-width: 220px;
+
+  background: var(--blanc);
+
+  box-shadow: 0 4px 24px var(--shadow-rouge-15);
+
+  border-radius: 0 0 12px 12px;
+
+  z-index: 1050;
+
+  padding: 8px 0;
+
+}
+
+.custom-submenu .dropdown-item {
+
+  color: var(--rouge-sky);
+
+  padding: 8px 24px;
+
+  font-weight: 500;
+
+  text-decoration: none;
+
+  display: block;
+
+}
+
+.custom-submenu .dropdown-item:hover {
+
+  background: var(--or-light);
+
+  color: var(--rouge-sky-lighter);
+
+}
+
+.nav-item.position-relative:hover .custom-submenu {
+
+  display: block;
+
+}
+
+.mega-menu {
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform: scaleY(0.7);
+
+  transition: opacity 0.25s, transform 0.25s;
+
+  position: absolute;
+
+  left: 0;
+
+  top: 56px; /* hauteur de la navbar */
+
+  width: 100vw;
+
+  background: var(--blanc);
+
+  box-shadow: 0 8px 32px var(--shadow-rouge-15);
+
+  border-radius: 0 0 18px 18px;
+
+  z-index: 2000;
+
+}
+
+.mega-menu.open {
+
+  opacity: 1;
+
+  pointer-events: auto;
+
+  transform: scaleY(1);
+
+}
+
+.mega-menu .mega-item {
+
+  color: var(--rouge-sky);
+
+  padding: 10px 24px;
+
+  font-weight: 500;
+
+  text-decoration: none;
+
+  display: inline-block;
+
+  margin: 6px 0;
+
+  border-radius: 8px;
+
+  transition: background 0.2s, color 0.2s;
+
+  white-space: nowrap;
+
+}
+
+.mega-menu .mega-item:hover {
+
+  background: var(--or-light);
+
+  color: var(--rouge-sky-lighter);
+
+}
+
+.menu-blur {
+
+  opacity: 0;
+
+  display: block;
+
+  position: fixed;
+
+  top: 0; left: 0; width: 100vw; height: 100vh;
+
+  background: var(--shadow-rouge-80);
+
+  backdrop-filter: blur(4px);
+
+  z-index: 1500;
+
+  transition: opacity 0.25s;
+
+  pointer-events: none;
+
+}
+
+.menu-blur.open {
+
+  opacity: 1;
+
+  pointer-events: auto;
+
+}
+
+
+
+.navbar-submenu {
+
+  display: none;
+
+  position: absolute;
+
+  left: 0;
+
+  top: 100%;
+
+  width: max-content; /* expand only as needed for horizontal content */
+
+  max-width: 90vw; /* never overflow screen */
+
+  background: var(--blanc);
+
+  box-shadow: 0 8px 32px var(--shadow-rouge-15);
+
+  border-radius: 0 0 18px 18px;
+
+  z-index: 2000;
+
+  padding: 16px 24px;
+
+  animation: growDown 0.25s cubic-bezier(.4,0,.2,1);
+
+  white-space: nowrap;
+
+  overflow: auto;
+
+}
+
+@keyframes growDown {
+
+  0% { transform: scaleY(0.7); opacity:0; }
+
+  100% { transform: scaleY(1); opacity:1; }
+
+}
+
+.submenu-item {
+
+  color: var(--rouge-sky);
+
+  padding: 8px 18px;
+
+  font-weight: 500;
+
+  text-decoration: none;
+
+  display: inline-block;
+
+  margin: 4px 0;
+
+  border-radius: 6px;
+
+  transition: background 0.2s, color 0.2s;
+
+  white-space: nowrap;
+
+}
+
+.submenu-item:hover {
+
+  background: var(--or-light);
+
+  color: var(--rouge-sky-lighter);
+
+}
+
+#panier-flottant {
+
+  animation: floatPanier 2s infinite alternate;
+
+}
+
+@keyframes floatPanier {
+
+  0% { transform: translateY(0);}
+
+  100% { transform: translateY(-12px);}
+
+}
+
+/* Style pour navbar-toggler mobile */
+
+.navbar-toggler {
+
+  border-color: var(--rouge-sky) !important;
+
+  padding: 8px 12px;
+
+}
+
+.navbar-toggler:focus {
+
+  box-shadow: none;
+
+  border-color: var(--rouge-sky-lighter) !important;
+
+}
+
+.navbar-toggler-icon {
+
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23761023' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+
+}
+
+.footer-custom {
+  background: linear-gradient(90deg, var(--rouge-fonce), var(--rouge-vif));
+  box-shadow: 0 -2px 16px var(--shadow-rouge-30);
+  position: relative;
+  padding-top: 3rem;
+}
+
+  .ml-neg-20 {
+    margin-left: -20px;
+  }
+  </style>
+
+</head>
+
+<script>
+
+function showSubMenu() {
+
+  document.getElementById('sub-menu').style.display = 'block';
+
+}
+
+function hideSubMenu() {
+
+  document.getElementById('sub-menu').style.display = 'none';
+
+}
+
+function showAboutMenu() {
+
+  document.getElementById('about-menu-dropdown').style.display = 'block';
+
+}
+
+function hideAboutMenu() {
+
+  document.getElementById('about-menu-dropdown').style.display = 'none';
+
+}
+
+</script>
+
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Toast Notification Container -->
+<div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;"></div>
+
+<!-- Ajoute ce bloc juste après <body> dans base.html pour afficher les bulles sur toutes les pages -->
+
+<div id="bg-shapes">
+
+  <div class="shape shape1"></div>
+
+  <div class="shape shape2"></div>
+
+  <div class="shape shape3"></div>
+
+</div>
+
+<!-- Bandeau d'infos animé -->
+
+<!-- SUPPRIMÉ : la réduction n'est plus affichée -->
+
+
+
+<!-- 🌐 HEADER -->
+
+
+<nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top navbar-glow w-100" style="background-color:var(--noir); box-shadow:0 4px 24px var(--shadow-rouge-80);">
+
+  <div class="container-fluid" style="padding-left: 35px; padding-right: 35px;">
+
+    <span class="navbar-logo d-flex flex-column align-items-center">
+
+  {% if logo %}
+
+    <a href="{% url 'accueil' %}">
+
+<img src="{{ logo.image.url }}" alt="{{ logo.alt }}" style="width:auto; height:90px; object-fit:cover;">    </a>
+
+  {% else %}
+
+    <a href="{% url 'accueil' %}">
+
+      <span class="navbar-brand">SkyConnect</span>
+
+    </a>
+
+  {% endif %}
+
+</span>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+      <span class="navbar-toggler-icon"></span>
+
+    </button>
+
+    <div class="collapse navbar-collapse w-100" id="navbarNav">
+
+      <ul class="navbar-nav ms-4 align-items-center justify-content-between w-100">
+
+        <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'accueil' %}"><i class="bi bi-house-door-fill me-1"></i>Accueil</a></li>
+
+        <li class="nav-item position-relative" id="produits-menu"><a class="nav-link" href="{% url 'equipements' %}" onmouseover="showSubMenu()" onmouseout="hideSubMenu()"><i class="bi bi-shop me-1"></i>Boutique</a>
+
+  <div id="sub-menu" class="navbar-submenu" onmouseover="showSubMenu()" onmouseout="hideSubMenu()">
+
+    <div class="row gx-4 gy-2">
+
+      <div class="col-auto">
+
+        <strong style="color:var(--rouge-sky); padding-left:16px;">Équipements</strong>
+
+        <div class="d-flex flex-row flex-wrap mt-2">
+
+          {% for sous_categorie in equipement_categories %}
+
+            <a class="submenu-item" href="{% url 'sous_categorie_detail' sous_categorie.id %}">{{ sous_categorie.nom }}</a>
+
+          {% empty %}
+
+            <span class="submenu-item text-muted">Aucune catégorie</span>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+      <div class="col-auto">
+
+        <strong style="color:var(--rouge-sky); padding-left:16px;">Accessoires</strong>
+
+        <div class="d-flex flex-row flex-wrap mt-2">
+
+          {% for sous_categorie in accessoire_categories %}
+
+            <a class="submenu-item" href="{% url 'sous_categorie_detail' sous_categorie.id %}">{{ sous_categorie.nom }}</a>
+
+          {% empty %}
+
+            <span class="submenu-item text-muted">Aucune catégorie</span>
+
+          {% endfor %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</li>
+
+        <li class="nav-item">
+
+          <a class="nav-link {% if request.path == '/forfaits/' %}active{% endif %}" href="{% url 'forfaits' %}">
+
+            <i class="bi bi-broadcast-pin me-1"></i>Nos Forfaits
+
+          </a>
+
+        </li>
+
+        <li class="nav-item position-relative" id="about-menu"><a class="nav-link" href="#" onmouseover="showAboutMenu()" onmouseout="hideAboutMenu()"><i class="bi bi-info-circle-fill me-1"></i>À propos</a>
+
+          <div id="about-menu-dropdown" class="navbar-submenu" onmouseover="showAboutMenu()" onmouseout="hideAboutMenu()">
+
+            <div class="d-flex flex-column">
+
+              <a class="submenu-item {% if request.path == '/zone-couverture/' %}active{% endif %}" href="{% url 'zone_couverture' %}">
+
+                <i class="bi bi-geo-alt-fill me-2"></i>Zone de couverture
+
+              </a>
+
+              <a class="submenu-item {% if request.path == '/qui-sommes-nous/' %}active{% endif %}" href="{% url 'qui_sommes_nous' %}">
+
+                <i class="bi bi-people-fill me-2"></i>Qui sommes-nous
+
+              </a>
+
+            </div>
+
+          </div>
+
+        </li>
+
+        <li class="nav-item"><a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="{% url 'contact' %}"><i class="bi bi-envelope-fill me-1"></i>Contact</a></li>
+
+        <li class="nav-item"><a class="nav-link {% if request.path == '/faq/' %}active{% endif %}" href="{% url 'faq' %}"><i class="bi bi-question-circle-fill me-1"></i>FAQ</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="{% url 'tickets' %}"><i class="bi bi-ticket-perforated-fill me-1"></i>Tickets</a></li>
+
+        <li class="nav-item ms-3">
+
+        <a href="{% url 'blog' %}" class="btn btn-outline-danger btn-sm fw-bold shadow-sm btn-animated">Blog / Actualités</a>
+
+        <li class="nav-item ms-3 position-relative d-flex align-items-center">
+
+          <a class="nav-link d-flex align-items-center" href="{% url 'panier' %}" title="Voir le panier">
+
+            <i class="bi bi-cart3" style="font-size:1.5rem; vertical-align:middle;"></i>
+
+            <span class="ms-1 fw-bold panier-count" style="color:var(--rouge-sky-lighter); font-size:1.1rem;">
+
+              {{ panier_count|default:"0" }}
+
+            </span>
+
+          </a>
+
+        </li>
+
+        <!-- Account/login UI removed: authentication disabled for public site -->
+
+      </ul>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
+
+<!-- 🔁 CONTENU DE LA PAGE -->
+
+<main class="container flex-grow-1">
+
+  {% block content %}
+
+  <!-- Le contenu spécifique de chaque page viendra ici -->
+
+  {% endblock %}
+
+</main>
+
+
+
+<!-- 🔻 FOOTER -->
+
+<!-- filepath: c:\Users\mirab\Desktop\Stage\skyconnect-finalisation\core\templates\core\base.html -->
+
+<footer class="footer footer-glow mt-auto footer-custom">
+
+  <div class="container">
+
+    <div class="row text-start">
+
+      <div class="col-md-4 mb-3">
+
+        <h5 class="mb-2"><i class="bi bi-wifi"></i> SKYCONNECT</h5>
+
+        <p>Le meilleur fournisseur d’accès Internet en Guinée</p>
+        <p>
+          <i class="bi bi-geo-alt-fill"></i> Kipé ,carrefour Metal Guinée, Immeuble SkyConnect<br>
+
+          <i class="bi bi-clock"></i> Lun-Ven : 8h-18h<br>
+
+          <i class="bi bi-envelope"></i> <a href="mailto:{{ email_commercial }}">{{ email_commercial }}</a><br>
+
+          <i class="bi bi-telephone"></i> <a href="tel:{{ telephone_commercial }}">{{ telephone_commercial }}</a>
+
+        </p>
+
+      </div>
+
+      <div class="col-md-3 mb-2">
+
+        <h6 class="mb-2">Liens rapides</h6>
+
+        <ul class="list-unstyled">
+
+          <li><a href="{% url 'accueil' %}">Accueil</a></li>
+
+          <li><a href="{% url 'forfaits' %}">Nos Forfaits</a></li>
+
+          <li><a href="{% url 'equipements' %}">Nos Équipements</a></li>
+
+          <li><a href="{% url 'zone_couverture' %}">Zone de couverture</a></li>
+
+          <li><a href="{% url 'qui_sommes_nous' %}">Qui sommes-nous</a></li>
+
+          <li><a href="mailto:{{ email_commercial }}">Contact</a></li>
+
+          <li><a href="{% url 'blog' %}">Actualités</a></li>
+
+        </ul>
+
+      </div>
+
+      <div class="col-md-2 mb-2 ml-neg-20">
+
+        <h6 class="mb-2">Contact rapide</h6>
+
+        <a href="mailto:{{ email_commercial }}" class="btn btn-outline-light btn-sm w-100 mb-2">
+
+          <i class="bi bi-envelope"></i> Écrire un email
+
+        </a>
+
+        <a href="https://wa.me/{{ whatsapp_phone }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm w-100 mb-2">
+
+          <i class="bi bi-whatsapp"></i> WhatsApp direct
+
+        </a>
+
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn btn-outline-light btn-sm mt-3 w-100">
+
+          <i class="bi bi-arrow-up"></i> Haut de page
+
+        </button>
+
+      </div>
+
+      <div class="col-md-2 mb-3 text-center ms-md-5">
+
+        {% if logo %}
+
+          <a href="{% url 'accueil' %}">
+
+          <img src="{{ logo.image.url }}" alt="{{ logo.alt }}" style="height:48px; width:auto; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;">
+
+        </a>
+
+      {% endif %}
+
+        <h6 class="mb-2">Réseaux sociaux</h6>
+
+        <div>
+
+          <a href="{{ facebook_url }}" target="_blank" class="me-2" title="Facebook"><i class="bi bi-facebook" style="font-size:1.5rem; color:var(--blanc);"></i></a>
+
+          <a href="{{ twitter_url }}" target="_blank" class="me-2" title="X (Twitter)"><i class="bi bi-twitter-x" style="font-size:1.5rem; color:var(--blanc);"></i></a>
+
+          <a href="{{ linkedin_url }}" target="_blank" class="me-2" title="LinkedIn"><i class="bi bi-linkedin" style="font-size:1.5rem; color:var(--blanc);"></i></a>
+
+          <a href="https://wa.me/{{ whatsapp_phone }}" target="_blank" class="me-2" title="WhatsApp"><i class="bi bi-whatsapp" style="font-size:1.5rem; color:var(--blanc);"></i></a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <hr class="my-3" style="border-color:var(--blanc);">
+
+    <div class="text-center small text-light mt-2">
+
+      <a href="{% url 'mentions_legales' %}">Mentions légales</a>
+
+      <br>
+
+      &copy; SKYCONNECT {{ now|date:"Y" }}. All rights reserved.
+
+    </div>
+
+  </div>
+
+</footer>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- Global Notification Toast Function -->
+<script>
+function showNotification(message, type = 'info') {
+  const container = document.getElementById('notification-container');
+  const toastId = 'toast-' + Date.now();
+  const alertClass = type === 'error' ? 'alert-danger' : (type === 'success' ? 'alert-success' : 'alert-' + type);
+  
+  const toastHTML = `
+    <div id="${toastId}" class="alert ${alertClass} alert-dismissible fade show" role="alert" style="margin-bottom: 10px;">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+  
+  container.innerHTML += toastHTML;
+  
+  // Auto-hide after 4 seconds
+  setTimeout(() => {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.remove();
+    }
+  }, 4000);
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+Nouveau message de contact
+
+Nom: {{ message.nom }}
+Email: {{ message.email }}
+Sujet: {{ message.sujet }}
+
+Message:
+{{ message.message }}
+
+
+--
+SkyConnect

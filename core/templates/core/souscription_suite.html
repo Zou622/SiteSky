@@ -1,0 +1,19 @@
+<!-- filepath: c:\Users\mirab\Desktop\Stage\skyconnect-finalisation\core\templates\core\souscription_suite.html -->
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>Informations client pour {{ forfait.nom }}</h2>
+  <p>Région : {{ zone.region }}</p>
+  <p>Commune : {{ commune.nom }}</p>
+  {% if erreurs %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for err in erreurs %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <!-- Ajoute ici ton formulaire client -->
+</div>
+{% endblock %}

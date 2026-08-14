@@ -1,0 +1,107 @@
+<!-- filepath: c:\Users\mirab\Desktop\Stage\skyconnect-finalisation\core\templates\core\produit_detail.html -->
+{% extends 'core/base.html' %}
+{% load price_helpers %}
+{% block title %}{{ produit.nom }} - Détail{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-6 text-center">
+      {% if produit.image %}
+        <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="img-fluid rounded shadow" style="max-height:400px;">
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      <div class="p-4 rounded shadow" style="background:var(--blanc);">
+        <h2 class="fw-bold" style="color:var(--rouge-sky);">{{ produit.nom }}</h2>
+        <p class="mb-2">{{ produit.description }}</p>
+        <div class="mb-2"><strong>Prix :</strong> {% if hide_product_prices %}à la demande{% else %}{{ produit.prix|floatformat:0 }} GNF{% endif %}</div>
+        <div class="mb-2"><strong>Quantité en stock :</strong> {{ produit.quantite }}</div>
+        <div class="mb-2"><strong>Référence :</strong> {{ produit.reference }}</div>
+        <div class="mb-2"><strong>Date d'ajout :</strong> {{ produit.date_ajout|date:"d/m/Y H:i" }}</div>
+        </div>
+       <!-- Partie caractéristiques dans un cadre -->
+        <div class="card mb-3" style="background:var(--blanc);">
+            <div class="card-header fw-bold" style="color:var(--rouge-sky);">Caractéristiques</div>
+            <div class="card-body">
+                {% if caracteristiques %}
+                    {% for nom, valeur in caracteristiques %}
+                        <div class="row mb-2">
+                            <div class="col-5 fw-bold">{{ nom }}</div>
+                            <div class="col-7">{{ valeur }}</div>
+                        </div>
+                    {% endfor %}
+            {% else %}
+                <div class="text-muted">Aucune caractéristique renseignée.</div>
+            {% endif %}
+            </div>
+        </div>
+        <div class="mb-2"><strong>Quantité en stock :</strong> {{ produit.quantite }}</div>
+
+        {% if produit.quantite > 0 %}
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <input id="qty-input-{{ produit.id }}" type="number" min="1" max="{{ produit.quantite }}" value="1" style="width:80px;" class="form-control">
+          <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm" onclick="ajouterAuPanier({{ produit.id }})">Ajouter au panier</button>
+        </div>
+        {% else %}
+        <button class="btn btn-outline-secondary mt-2" disabled>Indisponible</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal de confirmation -->
+<div class="modal fade" id="panierModal" tabindex="-1" aria-labelledby="panierModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="panierModalLabel">Produit ajouté au panier</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Voulez-vous continuer vers le panier ou poursuivre vos achats ?</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a id="versPanierBtn" href="#" class="btn btn-outline-secondary">Aller au panier</a>
+            <button type="button" class="btn btn-animated" data-bs-dismiss="modal">Poursuivre les achats</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function ajouterAuPanier(produitId) {
+  const qtyInput = document.getElementById('qty-input-' + produitId);
+  let qty = 1;
+  if (qtyInput) {
+    qty = parseInt(qtyInput.value) || 1;
+    const max = parseInt(qtyInput.max) || qty;
+    if (qty < 1) qty = 1;
+    if (qty > max) qty = max;
+  }
+
+  const url = "{% url 'ajouter_au_panier' 0 %}".replace('0', produitId) + '?q=' + qty;
+
+  fetch(url, {
+    headers: {'X-Requested-With': 'XMLHttpRequest'}
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      document.querySelectorAll('.panier-count').forEach(function(el) {
+        el.textContent = data.panier_count;
+      });
+      document.getElementById('versPanierBtn').href = "{% url 'panier' %}";
+      var modal = new bootstrap.Modal(document.getElementById('panierModal'));
+      modal.show();
+    } else if (data.error) {
+      showNotification(data.error, 'error');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showNotification("Erreur lors de l'ajout au panier.", 'error');
+  });
+}
+</script>
+{% endblock %}

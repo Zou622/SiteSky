@@ -1,0 +1,141 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Tickets WiFi - SkyConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <!-- Header -->
+      <div class="text-center mb-5">
+        <h1 class="display-4">
+          <i class="bi bi-wifi me-3" style="color: var(--bleu-sky);"></i>
+          Tickets WiFi Hotspot
+        </h1>
+        <p class="lead text-muted">
+          Connectez-vous aux hotspots SkyConnect avec nos tickets temporaires
+        </p>
+      </div>
+
+      <!-- Avantages -->
+      <div class="row mb-5">
+        <div class="col-md-4 text-center">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-clock-history text-success" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Durées Flexibles</h5>
+              <p class="card-text">De 1 heure à plusieurs jours selon vos besoins</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-shield-check text-info" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Connexion Sécurisée</h5>
+              <p class="card-text">Identifiant et mot de passe uniques pour chaque ticket</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-lightning-charge text-warning" style="font-size: 3rem;"></i>
+              <h5 class="card-title mt-3">Connexion Instantanée</h5>
+              <p class="card-text">Utilisez immédiatement après l'achat</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Types de tickets -->
+      <h2 class="text-center mb-4">Choisissez votre durée</h2>
+
+      {% if ticket_types %}
+        <div class="row g-4">
+          {% for ticket_type in ticket_types %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100" style="border-color: var(--bleu-sky); border: 1px solid var(--bleu-sky);">
+              <div class="card-header text-white text-center" style="background-color: var(--bleu-sky);">
+                <h4 class="mb-0">{{ ticket_type.nom }}</h4>
+              </div>
+              <div class="card-body text-center">
+                <div class="display-4 fw-bold mb-3" style="color: var(--bleu-sky);">
+                  {{ ticket_type.prix|floatformat:0 }} <small class="text-muted">GNF</small>
+                </div>
+
+                {% if ticket_type.description %}
+                <p class="card-text text-muted mb-3">{{ ticket_type.description }}</p>
+                {% endif %}
+
+                <div class="mb-3">
+                  <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Identifiant et mot de passe fournis après achat
+                  </small>
+                </div>
+
+                <button class="btn btn-lg w-100" style="background-color: var(--bleu-sky); border-color: var(--bleu-sky); color: white;" onclick="acheterTicket({{ ticket_type.id }}, '{{ ticket_type.nom }}');">
+                  <i class="bi bi-cart-plus me-2"></i>
+                  Acheter maintenant
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center">
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Aucun ticket disponible pour le moment. Revenez bientôt !
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Comment ça marche -->
+      <div class="mt-5">
+        <h3 class="text-center mb-4">Comment ça marche ?</h3>
+        <div class="row">
+          <div class="col-md-3 text-center mb-3">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span class="fw-bold" style="color: var(--bleu-sky);">1</span>
+            </div>
+            <h6 class="mt-2">Choisissez</h6>
+            <p class="small text-muted">Sélectionnez la durée qui vous convient</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span class="fw-bold" style="color: var(--bleu-sky);">2</span>
+            </div>
+            <h6 class="mt-2">Payez</h6>
+            <p class="small text-muted">Effectuez le paiement en ligne</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span class="fw-bold" style="color: var(--bleu-sky);">3</span>
+            </div>
+            <h6 class="mt-2">Recevez</h6>
+            <p class="small text-muted">Obtenez vos identifiants par email</p>
+          </div>
+          <div class="col-md-3 text-center mb-3">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+              <span class="fw-bold" style="color: var(--bleu-sky);">4</span>
+            </div>
+            <h6 class="mt-2">Connectez-vous</h6>
+            <p class="small text-muted">Utilisez le WiFi partout où il y a SkyConnect</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function acheterTicket(ticketTypeId, ticketName) {
+    // rediriger vers vue d'achat
+    window.location.href = '/tickets/acheter/' + ticketTypeId + '/';
+}
+</script>
+{% endblock %}

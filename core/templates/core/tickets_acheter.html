@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Acheter un ticket - SkyConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header text-white" style="background-color: var(--bleu-sky);">
+          <h4 class="mb-0">Acheter : {{ ticket_type.nom }}</h4>
+        </div>
+        <div class="card-body">
+          <p class="lead">Prix : <strong>{{ ticket_type.prix|floatformat:0 }} GNF</strong></p>
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Nom complet</label>
+              {{ form.nom }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              {{ form.email }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Téléphone (optionnel)</label>
+              {{ form.telephone }}
+            </div>
+
+            <button class="btn btn-lg" type="submit" style="background-color: var(--bleu-sky); color:white;">Payer et recevoir le ticket</button>
+            <a href="/tickets/" class="btn btn-link">Retour</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
