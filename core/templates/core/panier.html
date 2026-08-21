@@ -33,7 +33,10 @@
                 <td>{{ item.total_ligne|floatformat:0 }} GNF</td>
             {% endif %}
             <td>
-                <a href="{% url 'retirer_du_panier' item.id %}" class="btn btn-sm btn-outline-danger">Retirer</a>
+                <form method="post" action="{% url 'retirer_du_panier' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Retirer</button>
+                </form>
             </td>
         </tr>
         {% endfor %}
@@ -45,7 +48,10 @@
         {% endif %}
     </tbody>
 </table>
-<a href="{% url 'vider_panier' %}" class="btn btn-outline-warning">Vider le panier</a>
+<form method="post" action="{% url 'vider_panier' %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-warning">Vider le panier</button>
+</form>
 <a href="{% url 'commande_infos_client' %}" class="btn btn-outline-success">Valider la commande</a>
 {% else %}
 <p>Votre panier est vide.</p>

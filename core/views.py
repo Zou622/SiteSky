@@ -9,12 +9,12 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from django.urls import reverse
 from django.db.models import Sum
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.core.cache import cache
 from django.template.loader import render_to_string
 
 import json
 import os
-import time
 import urllib.parse
 import urllib.request
 from email.mime.image import MIMEImage
@@ -31,6 +31,11 @@ from .models import (
 def conditions_generales(request):
     """Return the terms & conditions fragment for modal loading."""
     return render(request, 'core/conditions_generales.html')
+
+
+def healthz(request):
+    """Endpoint without database access, used by the container healthcheck."""
+    return HttpResponse('ok', content_type='text/plain')
 
 
 # sign_out removed: authentication is disabled for public site
@@ -90,19 +95,17 @@ def _verify_recaptcha(response_token):
         return False
 
 
-def _is_contact_rate_limited(request):
-    last_submit = request.session.get('contact_last_submission')
-    now = time.time()
-    if last_submit and now - last_submit < 12:
-        return True
-    request.session['contact_last_submission'] = now
-    return False
+def _is_rate_limited(request, action, timeout):
+    """Limit unauthenticated public form submissions by client IP."""
+    forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    client_ip = forwarded_for.split(',', 1)[0].strip() or request.META.get('REMOTE_ADDR', '')
+    return not cache.add(f'rate-limit:{action}:{client_ip}', True, timeout=timeout)
 
 
 def contact(request):
     if request.method == 'POST':
         form = MessageContactForm(request.POST)
-        if _is_contact_rate_limited(request):
+        if _is_rate_limited(request, 'contact', 30):
             form.add_error(None, "Veuillez patienter quelques secondes avant de renvoyer votre message.")
         elif form.is_valid():
             recaptcha_response = request.POST.get('g-recaptcha-response', '')
@@ -150,17 +153,17 @@ def _save_session_cart(request, cart):
     request.session.modified = True
 
 
+@require_POST
 def ajouter_au_panier(request, produit_id):
     """
     Ajoute une quantité au panier de l'utilisateur.
-    Accepte q en querystring (GET) ou POST.
+    Accepte la quantité via POST uniquement.
     Valide et clamp la quantité entre 1 et produit.quantite.
     Retourne {'success': True, 'panier_count': <int>} ou {'success': False, 'error': ...}
     """
     produit = get_object_or_404(Produit, pk=produit_id)
 
-    # Récupère la quantité demandée (GET ?q= ou POST 'q')
-    q = request.GET.get('q') or request.POST.get('q') or '1'
+    q = request.POST.get('q', '1')
     try:
         q = int(q)
     except (ValueError, TypeError):
@@ -202,6 +205,7 @@ def ajouter_au_panier(request, produit_id):
         total_q = sum(int(v) for v in cart.values())
         return JsonResponse({'success': True, 'panier_count': int(total_q)})
 
+@require_POST
 def retirer_du_panier(request, item_id):
     # For authenticated users item_id is PanierItem id; for anonymous treat as produit id
     if request.user.is_authenticated:
@@ -215,36 +219,44 @@ def retirer_du_panier(request, item_id):
             _save_session_cart(request, cart)
         return redirect('panier')
 
+@require_POST
 def changer_quantite(request, item_id):
     # For authenticated users item_id is PanierItem id
     if request.user.is_authenticated:
         item = get_object_or_404(PanierItem, id=item_id, panier__user=request.user)
         produit = item.produit
-        if request.method == "POST":
+        try:
             quantite = int(request.POST.get("quantite", 1))
-            if quantite > produit.quantite:
-                quantite = produit.quantite
-            if quantite > 0:
-                item.quantite = quantite
-                item.save()
-            else:
-                item.delete()
+        except (TypeError, ValueError):
+            messages.error(request, "Quantité invalide.")
+            return redirect('panier')
+        if quantite > produit.quantite:
+            quantite = produit.quantite
+        if quantite > 0:
+            item.quantite = quantite
+            item.save()
+        else:
+            item.delete()
         return redirect('panier')
     else:
         # For anonymous users item_id is produit id
         produit = get_object_or_404(Produit, id=item_id)
-        if request.method == "POST":
+        try:
             quantite = int(request.POST.get("quantite", 1))
-            if quantite > produit.quantite:
-                quantite = produit.quantite
-            cart = _get_session_cart(request)
-            if quantite > 0:
-                cart[str(produit.id)] = quantite
-            else:
-                cart.pop(str(produit.id), None)
-            _save_session_cart(request, cart)
+        except (TypeError, ValueError):
+            messages.error(request, "Quantité invalide.")
+            return redirect('panier')
+        if quantite > produit.quantite:
+            quantite = produit.quantite
+        cart = _get_session_cart(request)
+        if quantite > 0:
+            cart[str(produit.id)] = quantite
+        else:
+            cart.pop(str(produit.id), None)
+        _save_session_cart(request, cart)
         return redirect('panier')
 
+@require_POST
 def vider_panier(request):
     if request.user.is_authenticated:
         panier, _ = Panier.objects.get_or_create(user=request.user)
@@ -382,6 +394,10 @@ from django.core.mail import send_mail
 # ...existing code...
 def finaliser_souscription(request):
     if request.method != "POST":
+        return redirect("forfaits")
+
+    if _is_rate_limited(request, 'subscription', 30):
+        messages.error(request, "Veuillez patienter avant de soumettre une nouvelle demande.")
         return redirect("forfaits")
 
     forfait_id = (request.POST.get("forfait_id") or "").strip()
@@ -935,6 +951,12 @@ def acheter_ticket(request, ticket_type_id):
     from .forms import WifiTicketPurchaseForm
 
     if request.method == 'POST':
+        if 'radius' not in settings.DATABASES:
+            messages.error(request, "La vente de tickets Wi-Fi est temporairement indisponible.")
+            return redirect('tickets')
+        if _is_rate_limited(request, 'wifi-ticket', 30):
+            messages.error(request, "Veuillez patienter avant de demander un autre ticket.")
+            return redirect('tickets')
         form = WifiTicketPurchaseForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data

@@ -41,7 +41,10 @@ function hideFullDesc(id) {
   </span>
 </p>
             <div class="mt-auto price-halo" style="color:var(--rouge-sky);">{% if hide_product_prices %}à la demande{% else %}{{ produit.prix|floatformat:0 }} GNF{% endif %}</div>
-            <a href="{% url 'ajouter_au_panier' produit.id %}" class="btn btn-outline-danger btn-sm fw-bold shadow-sm mt-2">Ajouter au panier</a>
+            <form method="post" action="{% url 'ajouter_au_panier' produit.id %}" class="mt-2">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm fw-bold shadow-sm">Ajouter au panier</button>
+            </form>
           </div>
         </div>
       </div>

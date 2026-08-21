@@ -80,10 +80,16 @@ function ajouterAuPanier(produitId) {
     if (qty > max) qty = max;
   }
 
-  const url = "{% url 'ajouter_au_panier' 0 %}".replace('0', produitId) + '?q=' + qty;
+  const url = "{% url 'ajouter_au_panier' 0 %}".replace('0', produitId);
 
   fetch(url, {
-    headers: {'X-Requested-With': 'XMLHttpRequest'}
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'q=' + encodeURIComponent(qty)
   })
   .then(response => response.json())
   .then(data => {

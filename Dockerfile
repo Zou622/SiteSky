@@ -14,7 +14,6 @@ RUN apt-get update && \
         default-libmysqlclient-dev \
         build-essential \
         pkg-config \
-        cron \
         curl && \
     rm -rf /var/lib/apt/lists/*
 
@@ -27,16 +26,6 @@ RUN python -m pip install --upgrade pip && \
 
 # Copier le reste du projet
 COPY . .
-
-# Exécuter collectstatic au build (une fois, pas à chaque démarrage)
-RUN python manage.py collectstatic --noinput
-
-# Créer le fichier log pour le cron AVANT que cron essaie d'écrire dedans
-RUN touch /var/log/radius_sync.log && chmod 666 /var/log/radius_sync.log
-
-# Installer le crontab
-COPY crontab /etc/cron.d/radius_sync
-RUN chmod 0644 /etc/cron.d/radius_sync && crontab /etc/cron.d/radius_sync
 
 # Créer un utilisateur non-root pour exécuter l'app
 RUN groupadd -r app && useradd -r -g app app

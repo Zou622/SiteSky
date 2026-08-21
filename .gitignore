@@ -1,0 +1,27 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Python et Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+.pytest_cache/
+.coverage
+htmlcov/
+staticfiles/
+
+# Environnements et artefacts
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# IDE et système
+.DS_Store
+.idea/
+.vscode/
+*.log

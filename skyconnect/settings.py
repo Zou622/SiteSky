@@ -5,6 +5,7 @@ Django settings for skyconnect project
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,14 +16,18 @@ load_dotenv(BASE_DIR / '.env', encoding='utf-8')
 def str_to_bool(value):
     return str(value).lower() in ('true', '1', 'yes')
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me-in-production')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ImproperlyConfigured('DJANGO_SECRET_KEY doit être défini.')
 DEBUG = str_to_bool(os.environ.get('DEBUG', 'False'))
 
 # contrôle si les prix des produits doivent être cachés partout sur le site
 # (forfaits et tickets ne sont pas concernés)
 HIDE_PRODUCT_PRICES = str_to_bool(os.environ.get('HIDE_PRODUCT_PRICES', 'False'))
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', '').split(',') if host.strip()]
+if not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured('ALLOWED_HOSTS doit être défini lorsque DEBUG=False.')
 
 # If Django is running behind a proxy doing SSL termination (e.g. external nginx)
 # we need to tell it which header indicates the original request scheme.
@@ -99,15 +104,16 @@ else:
             'HOST': os.environ.get('DB_HOST'),
             'PORT': os.environ.get('DB_PORT', '5432'),
         },
-        'radius': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'radius',
-        'USER': 'radius_user',
-        'PASSWORD': 'your_password',
-        'HOST': '192.168.67.17',
-        'PORT': '3306',
     }
-    }
+    if os.environ.get('RADIUS_DB_HOST'):
+        DATABASES['radius'] = {
+            'ENGINE': os.environ.get('RADIUS_DB_ENGINE', 'django.db.backends.mysql'),
+            'NAME': os.environ.get('RADIUS_DB_NAME', 'radius'),
+            'USER': os.environ.get('RADIUS_DB_USER'),
+            'PASSWORD': os.environ.get('RADIUS_DB_PASSWORD'),
+            'HOST': os.environ['RADIUS_DB_HOST'],
+            'PORT': os.environ.get('RADIUS_DB_PORT', '3306'),
+        }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -140,6 +146,23 @@ RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
 SECURE_SSL_REDIRECT = str_to_bool(os.environ.get('SECURE_SSL_REDIRECT', 'False'))
 SESSION_COOKIE_SECURE = str_to_bool(os.environ.get('SESSION_COOKIE_SECURE', 'False'))
 CSRF_COOKIE_SECURE = str_to_bool(os.environ.get('CSRF_COOKIE_SECURE', 'False'))
+SESSION_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
+
+# A single Gunicorn worker is used by default. Replace this cache with Redis
+# before scaling the application to multiple processes or hosts.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'skyconnect-production',
+    }
+}
 
 # CSRF Trusted Origins (from .env)
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]

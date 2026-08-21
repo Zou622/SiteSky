@@ -20,6 +20,8 @@ staticfiles/
 .git/
 .gitignore
 .env
+certbot/
+backups/
 .DS_Store
 .vscode/
 .idea/

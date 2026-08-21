@@ -2,6 +2,7 @@ from django.contrib import admin, messages
 from django.urls import path, reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.html import format_html
+from django.views.decorators.http import require_POST
 
 from .models import DemandeSouscription
 
@@ -206,8 +207,8 @@ class OrderAdmin(admin.ModelAdmin):
     def action_prendre(self, obj):
         """Action en ligne pour prendre en charge une commande"""
         if obj.statut == "en_attente" and not obj.commercial:
-            url = reverse('admin:core_order_prendre_en_charge', args=[obj.pk])
-            return format_html('<a class="button" href="{}">Prendre en charge</a>', url)
+            url = reverse('admin:core_order_change', args=[obj.pk])
+            return format_html('<a class="button" href="{}">Ouvrir</a>', url)
         return '-'
     action_prendre.short_description = 'Prendre en charge'
     
@@ -332,6 +333,7 @@ class OrderAdmin(admin.ModelAdmin):
         ]
         return custom + urls
 
+    @require_POST
     def prendre_en_charge_view(self, request, pk, *args, **kwargs):
         # accès réservé aux superusers et au groupe Commercial
         if not (request.user.is_superuser or request.user.groups.filter(name='Commercial').exists()):
@@ -349,17 +351,35 @@ class OrderAdmin(admin.ModelAdmin):
 
     @admin.action(description="Marquer comme récupérée")
     def marquer_confirme(self, request, queryset):
-        updated = queryset.filter(mode_reception='agence').update(statut="recuperee")
+        updated = 0
+        for commande in queryset.filter(mode_reception='agence'):
+            commande.statut = 'recuperee'
+            try:
+                commande.save()
+                updated += 1
+            except ValueError as error:
+                self.message_user(request, f"{commande.reference} : {error}", level=messages.ERROR)
         self.message_user(request, f"{updated} commandes marquées comme récupérées.")
 
     @admin.action(description="Marquer comme livrée")
     def marquer_preparation(self, request, queryset):
-        updated = queryset.filter(mode_reception='livraison').update(statut="livree")
+        updated = 0
+        for commande in queryset.filter(mode_reception='livraison'):
+            commande.statut = 'livree'
+            try:
+                commande.save()
+                updated += 1
+            except ValueError as error:
+                self.message_user(request, f"{commande.reference} : {error}", level=messages.ERROR)
         self.message_user(request, f"{updated} commandes marquées comme livrées.")
 
     @admin.action(description="Marquer comme annulée")
     def marquer_annule(self, request, queryset):
-        updated = queryset.update(statut="annulee")
+        updated = 0
+        for commande in queryset:
+            commande.statut = 'annulee'
+            commande.save()
+            updated += 1
         self.message_user(request, f"{updated} commandes annulées.")
 
 @admin.action(description="Confirmer les commandes sélectionnées")

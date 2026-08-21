@@ -63,7 +63,11 @@
 <script>
 function ajouterAuPanier(produitId) {
   fetch("{% url 'ajouter_au_panier' 0 %}".replace('0', produitId), {
-    headers: {'X-Requested-With': 'XMLHttpRequest'}
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
   })
   .then(response => response.json())
   .then(data => {
